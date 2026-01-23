@@ -1,0 +1,16 @@
+fastapi==0.110.0
+uvicorn==0.27.1
+python-dotenv==1.0.1
+
+langchain==0.1.13
+langchain-core==0.1.33
+langchain-community==0.0.29
+langchain-google-genai==0.0.11
+google-generativeai>=0.4.1,<0.5.0
+
+
+mysql-connector-python==8.3.0
+requests==2.31.0
+pydantic==1.10.13
+twilio==8.1.0
+
