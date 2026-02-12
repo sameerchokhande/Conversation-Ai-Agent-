@@ -1,22 +1,52 @@
-from langchain.tools import tool
 from app.db.connection import get_db
+from langchain.tools import tool
 
-
-@tool
-def book_slot(name: str, phone: str, doctor: str, date: str, time: str) -> str:
+# =========================
+# PURE DB FUNCTION (FASTAPI)
+# =========================
+def book_slot_db(
+    patient_name: str,
+    address: str,
+    reason: str,
+    doctor_name: str,
+    appointment_date: str,
+    appointment_time: str,
+    call_sid: str
+) -> str:
     """
-    Book a new appointment
+    Book a new appointment in DB
     """
     db = get_db()
     cursor = db.cursor()
 
     cursor.execute(
         """
-        INSERT INTO appointments (name, phone, doctor, date, time, status)
-        VALUES (%s, %s, %s, %s, %s, 'scheduled')
+        INSERT INTO appointments
+        (call_sid, patient_name, address, reason, doctor_name,
+         appointment_date, appointment_time, status)
+        VALUES (%s,%s,%s,%s,%s,%s,%s,'scheduled')
         """,
-        (name, phone, doctor, date, time)
+        (
+            call_sid,
+            patient_name,
+            address,
+            reason,
+            doctor_name,
+            appointment_date,
+            appointment_time
+        )
     )
 
     db.commit()
-    return f"✅ Appointment booked for {name} with Dr. {doctor} on {date} at {time}."
+    return "Your appointment has been successfully booked."
+
+
+# =========================
+# LANGCHAIN TOOL (OPTIONAL)
+# =========================
+@tool
+def book_slot(input: dict) -> str:
+    """
+    Book appointment using AI agent
+    """
+    return book_slot_db(**input)

@@ -2,22 +2,37 @@ from langchain.tools import tool
 from app.db.connection import get_db
 
 
-@tool
-def check_slot(doctor: str, date: str) -> str:
-    """
-    Check available slots for a doctor on a given date
-    """
+# ✅ Plain DB function (for IVR / FastAPI)
+def check_slot_db(doctor_name: str, appointment_date: str) -> str:
     db = get_db()
     cursor = db.cursor()
 
     cursor.execute(
-        "SELECT time FROM appointments WHERE doctor=%s AND date=%s AND status='scheduled'",
-        (doctor, date)
+        """
+        SELECT appointment_time
+        FROM appointments
+        WHERE doctor_name=%s
+          AND appointment_date=%s
+          AND status='scheduled'
+        """,
+        (doctor_name, appointment_date)
     )
 
     booked = [row[0] for row in cursor.fetchall()]
 
     if not booked:
-        return f"Doctor {doctor} has all slots available on {date}."
+        return f"Doctor {doctor_name} has all slots available on {appointment_date}."
 
-    return f"Booked slots for Dr. {doctor} on {date}: {booked}"
+    return (
+        f"Booked slots for Doctor {doctor_name} on {appointment_date} are "
+        + ", ".join(booked)
+    )
+
+
+# ✅ LangChain tool (ONLY for agent usage)
+@tool
+def check_slot(doctor_name: str, appointment_date: str) -> str:
+    """
+    Check available appointment slots for a given doctor on a specific date.
+    """
+    return check_slot_db(doctor_name, appointment_date)
