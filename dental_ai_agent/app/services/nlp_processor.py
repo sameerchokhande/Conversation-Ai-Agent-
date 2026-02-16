@@ -5,7 +5,7 @@ import dateparser
 
 genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
 
-model = genai.GenerativeModel("gemini-1.5-flash")
+model = genai.GenerativeModel("gemini-2.5-flash")
 
 
 def extract_appointment_data(raw_text: str):
