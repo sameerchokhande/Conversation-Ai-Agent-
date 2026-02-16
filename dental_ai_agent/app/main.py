@@ -1,6 +1,9 @@
 from dotenv import load_dotenv
 import os
 
+# =========================
+# LOAD ENV
+# =========================
 load_dotenv()
 
 from fastapi import FastAPI, Request
@@ -13,7 +16,7 @@ from app.tools.booking import book_slot_db
 from app.tools.availability import check_slot_db
 from app.tools.cancel import cancel_slot_db
 from app.tools.reschedule import reschedule_slot_db
-
+from app.services.nlp_processor import extract_appointment_data
 
 app = FastAPI()
 
@@ -38,7 +41,7 @@ def get_latest_appointment_by_call_sid(call_sid):
         ORDER BY id DESC
         LIMIT 1
         """,
-        (call_sid,)
+        (call_sid,),
     )
     return cursor.fetchone()
 
@@ -127,10 +130,12 @@ async def voice_webhook(request: Request):
 
     if step == "date" and speech:
         session["data"]["appointment_date"] = speech
+
         availability = check_slot_db(
             session["data"]["doctor_name"],
-            session["data"]["appointment_date"]
+            session["data"]["appointment_date"],
         )
+
         session["step"] = "time"
         gather = Gather(input="speech", action="/voice", method="POST")
         gather.say(f"{availability}. Please say your preferred appointment time.")
@@ -142,6 +147,7 @@ async def voice_webhook(request: Request):
         session["step"] = "confirm"
 
         d = session["data"]
+
         gather = Gather(input="dtmf", num_digits=1, action="/voice", method="POST")
         gather.say(
             f"You want an appointment with Doctor {d['doctor_name']} "
@@ -151,18 +157,36 @@ async def voice_webhook(request: Request):
         response.append(gather)
         return str(response)
 
+    # ================= CONFIRM =================
     if step == "confirm" and digits:
         if digits == "1":
-            msg = book_slot_db(
-                patient_name=session["data"]["patient_name"],
-                address=session["data"]["address"],
-                reason=session["data"]["reason"],
-                doctor_name=session["data"]["doctor_name"],
-                appointment_date=session["data"]["appointment_date"],
-                appointment_time=session["data"]["appointment_time"],
-                call_sid=call_sid
+
+            # 🔥 CLEAN & STRUCTURE USING GEMINI
+            structured = extract_appointment_data(
+                f"""
+                Name: {session['data'].get('patient_name','')}
+                Address: {session['data'].get('address','')}
+                Reason: {session['data'].get('reason','')}
+                Doctor: {session['data'].get('doctor_name','')}
+                Date: {session['data'].get('appointment_date','')}
+                Time: {session['data'].get('appointment_time','')}
+                """
             )
-            response.say(msg)
+
+            if not structured:
+                response.say("Sorry, I could not process your appointment details.")
+            else:
+                msg = book_slot_db(
+                    patient_name=structured["patient_name"],
+                    address=structured["address"],
+                    reason=structured["reason"],
+                    doctor_name=structured["doctor_name"],
+                    appointment_date=structured["appointment_date"],
+                    appointment_time=structured["appointment_time"],
+                    call_sid=call_sid,
+                )
+                response.say(msg)
+
         else:
             response.say("Your appointment was cancelled.")
 
@@ -179,6 +203,7 @@ async def voice_webhook(request: Request):
             return str(response)
 
         session["data"]["appointment_id"] = appt["id"]
+
         gather = Gather(input="dtmf", num_digits=1, action="/voice", method="POST")
         gather.say(
             f"You have an appointment on {appt['appointment_date']} "
@@ -203,6 +228,7 @@ async def voice_webhook(request: Request):
     if step == "reschedule_date" and speech:
         session["data"]["new_date"] = speech
         session["step"] = "reschedule_time"
+
         gather = Gather(input="speech", action="/voice", method="POST")
         gather.say("Please say the new appointment time.")
         response.append(gather)
@@ -219,7 +245,7 @@ async def voice_webhook(request: Request):
             reschedule_slot_db(
                 appt["id"],
                 session["data"]["new_date"],
-                speech
+                speech,
             )
         )
 
@@ -239,13 +265,13 @@ async def voice_webhook(request: Request):
 def demo_outbound_call():
     client = Client(
         os.getenv("TWILIO_ACCOUNT_SID"),
-        os.getenv("TWILIO_AUTH_TOKEN")
+        os.getenv("TWILIO_AUTH_TOKEN"),
     )
 
     call = client.calls.create(
         to="+919766899198",
         from_=os.getenv("TWILIO_PHONE_NUMBER"),
-        twiml="<Response><Say>This is a demo appointment reminder.</Say></Response>"
+        twiml="<Response><Say>This is a demo appointment reminder.</Say></Response>",
     )
 
     return {"status": "Call triggered", "call_sid": call.sid}
