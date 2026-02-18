@@ -1,9 +1,6 @@
 from dotenv import load_dotenv
 import os
 
-# =========================
-# LOAD ENV
-# =========================
 load_dotenv()
 
 from fastapi import FastAPI, Request
@@ -13,147 +10,220 @@ from twilio.rest import Client
 
 from app.db.connection import get_db
 from app.tools.booking import book_slot_db
-from app.tools.availability import check_slot_db
-from app.tools.cancel import cancel_slot_db
-from app.tools.reschedule import reschedule_slot_db
 from app.services.nlp_processor import extract_appointment_data
 
 app = FastAPI()
-
-# =========================
-# IN-MEMORY SESSION STORE
-# =========================
 CALL_SESSIONS = {}
 
-
 # =========================
-# DB HELPER
+# CLEAR VOICE FUNCTION (Fix Distorted Audio)
 # =========================
-def get_latest_appointment_by_call_sid(call_sid):
-    db = get_db()
-    cursor = db.cursor(dictionary=True)
-
-    cursor.execute(
-        """
-        SELECT id, doctor_name, appointment_date, appointment_time
-        FROM appointments
-        WHERE call_sid=%s AND status='scheduled'
-        ORDER BY id DESC
-        LIMIT 1
-        """,
-        (call_sid,),
+def speak(response, text, lang="en-IN"):
+    response.say(
+        text,
+        voice="Polly.Aditi",   # Clear Indian neural voice
+        language=lang
     )
-    return cursor.fetchone()
 
+# =========================
+# LANGUAGE CONFIG
+# =========================
+LANG_MAP = {
+    "1": {"code": "en", "twilio": "en-IN"},
+    "2": {"code": "hi", "twilio": "hi-IN"},
+    "3": {"code": "mr", "twilio": "mr-IN"},
+}
+
+MESSAGES = {
+    "select_lang": "Press 1 for English. Press 2 for Hindi. Press 3 for Marathi.",
+
+    "welcome": {
+        "en": "Welcome to Smile Care Dental Clinic.",
+        "hi": "स्माइल केयर डेंटल क्लिनिक में आपका स्वागत है।",
+        "mr": "स्माईल केअर डेंटल क्लिनिक मध्ये आपले स्वागत आहे."
+    },
+
+    "ask_name": {
+        "en": "Please say your full name.",
+        "hi": "कृपया अपना पूरा नाम बताएं।",
+        "mr": "कृपया आपले पूर्ण नाव सांगा."
+    },
+
+    "ask_address": {
+        "en": "Please say your address.",
+        "hi": "कृपया अपना पता बताएं।",
+        "mr": "कृपया आपला पत्ता सांगा."
+    },
+
+    "ask_reason": {
+        "en": "Please tell the reason for your visit.",
+        "hi": "कृपया अपनी समस्या बताएं।",
+        "mr": "कृपया आपल्या भेटीचे कारण सांगा."
+    },
+
+    "ask_doctor": {
+        "en": "Please say the doctor's name.",
+        "hi": "कृपया डॉक्टर का नाम बताएं।",
+        "mr": "कृपया डॉक्टरांचे नाव सांगा."
+    },
+
+    "ask_date": {
+        "en": "Please say your preferred appointment date.",
+        "hi": "कृपया अपॉइंटमेंट की तारीख बताएं।",
+        "mr": "कृपया अपॉइंटमेंटची तारीख सांगा."
+    },
+
+    "ask_time": {
+        "en": "Please say your preferred appointment time.",
+        "hi": "कृपया अपॉइंटमेंट का समय बताएं।",
+        "mr": "कृपया अपॉइंटमेंटची वेळ सांगा."
+    },
+
+    "confirm": {
+        "en": "Press 1 to confirm. Press 2 to cancel.",
+        "hi": "पुष्टि के लिए 1 दबाएं। रद्द करने के लिए 2 दबाएं।",
+        "mr": "पुष्टीसाठी 1 दाबा. रद्द करण्यासाठी 2 दाबा."
+    },
+
+    "error": {
+        "en": "Sorry, something went wrong.",
+        "hi": "क्षमा करें, कुछ समस्या हुई।",
+        "mr": "माफ करा, काही समस्या झाली."
+    }
+}
 
 # =========================
 # INBOUND VOICE WEBHOOK
 # =========================
 @app.post("/voice", response_class=PlainTextResponse)
 async def voice_webhook(request: Request):
-    form = await request.form()
 
+    form = await request.form()
     call_sid = form.get("CallSid")
     digits = form.get("Digits")
     speech = form.get("SpeechResult")
 
+    print("\n📞 STEP:", CALL_SESSIONS.get(call_sid, {}).get("step"))
+    print("🎤 RAW SPEECH:", speech)
+    print("🔢 DIGITS:", digits)
+
     response = VoiceResponse()
 
     if call_sid not in CALL_SESSIONS:
-        CALL_SESSIONS[call_sid] = {"step": "menu", "data": {}}
+        CALL_SESSIONS[call_sid] = {
+            "step": "language",
+            "lang": None,
+            "twilio_lang": "en-IN",
+            "data": {}
+        }
 
     session = CALL_SESSIONS[call_sid]
     step = session["step"]
 
-    # ================= MENU =================
-    if step == "menu" and not digits:
+    # ================= LANGUAGE SELECTION =================
+    if step == "language" and not digits:
         gather = Gather(input="dtmf", num_digits=1, action="/voice", method="POST")
-        gather.say(
-            "Welcome to Smile Care Dental Clinic. "
-            "Press 1 to book an appointment. "
-            "Press 2 to reschedule an appointment. "
-            "Press 3 to cancel an appointment."
-        )
+        speak(gather, MESSAGES["select_lang"])
         response.append(gather)
         return str(response)
 
-    if step == "menu" and digits:
-        if digits == "1":
+    if step == "language" and digits:
+        if digits in LANG_MAP:
+            session["lang"] = LANG_MAP[digits]["code"]
+            session["twilio_lang"] = LANG_MAP[digits]["twilio"]
             session["step"] = "name"
-            gather = Gather(input="speech", action="/voice", method="POST")
-            gather.say("Please say your full name.")
+
+            speak(response, MESSAGES["welcome"][session["lang"]], session["twilio_lang"])
+
+            gather = Gather(
+                input="speech",
+                action="/voice",
+                method="POST",
+                speech_timeout="auto",
+                language=session["twilio_lang"],
+                speech_model="phone_call"
+            )
+            speak(gather, MESSAGES["ask_name"][session["lang"]], session["twilio_lang"])
             response.append(gather)
             return str(response)
 
-        if digits == "2":
-            session["step"] = "reschedule_date"
-            gather = Gather(input="speech", action="/voice", method="POST")
-            gather.say("Please say the new appointment date.")
-            response.append(gather)
+        else:
+            speak(response, "Invalid selection.")
+            response.hangup()
             return str(response)
 
-        if digits == "3":
-            session["step"] = "cancel_confirm"
+    lang = session["lang"]
+    twilio_lang = session["twilio_lang"]
 
     # ================= BOOKING FLOW =================
+
     if step == "name" and speech:
         session["data"]["patient_name"] = speech
+        print("🧾 SESSION DATA:", session["data"])
         session["step"] = "address"
-        gather = Gather(input="speech", action="/voice", method="POST")
-        gather.say("Please say your address.")
+
+        gather = Gather(input="speech", action="/voice", method="POST",
+                        speech_timeout="auto", language=twilio_lang,
+                        speech_model="phone_call")
+        speak(gather, MESSAGES["ask_address"][lang], twilio_lang)
         response.append(gather)
         return str(response)
 
     if step == "address" and speech:
         session["data"]["address"] = speech
+        print("🧾 SESSION DATA:", session["data"])
         session["step"] = "reason"
-        gather = Gather(input="speech", action="/voice", method="POST")
-        gather.say("Please tell the reason for your visit.")
+
+        gather = Gather(input="speech", action="/voice", method="POST",
+                        speech_timeout="auto", language=twilio_lang,
+                        speech_model="phone_call")
+        speak(gather, MESSAGES["ask_reason"][lang], twilio_lang)
         response.append(gather)
         return str(response)
 
     if step == "reason" and speech:
         session["data"]["reason"] = speech
+        print("🧾 SESSION DATA:", session["data"])
         session["step"] = "doctor"
-        gather = Gather(input="speech", action="/voice", method="POST")
-        gather.say("Please say the doctor's name.")
+
+        gather = Gather(input="speech", action="/voice", method="POST",
+                        speech_timeout="auto", language=twilio_lang,
+                        speech_model="phone_call")
+        speak(gather, MESSAGES["ask_doctor"][lang], twilio_lang)
         response.append(gather)
         return str(response)
 
     if step == "doctor" and speech:
         session["data"]["doctor_name"] = speech
+        print("🧾 SESSION DATA:", session["data"])
         session["step"] = "date"
-        gather = Gather(input="speech", action="/voice", method="POST")
-        gather.say("Please say your preferred appointment date.")
+
+        gather = Gather(input="speech", action="/voice", method="POST",
+                        speech_timeout="auto", language=twilio_lang,
+                        speech_model="phone_call")
+        speak(gather, MESSAGES["ask_date"][lang], twilio_lang)
         response.append(gather)
         return str(response)
 
     if step == "date" and speech:
         session["data"]["appointment_date"] = speech
-
-        availability = check_slot_db(
-            session["data"]["doctor_name"],
-            session["data"]["appointment_date"],
-        )
-
+        print("🧾 SESSION DATA:", session["data"])
         session["step"] = "time"
-        gather = Gather(input="speech", action="/voice", method="POST")
-        gather.say(f"{availability}. Please say your preferred appointment time.")
+
+        gather = Gather(input="speech", action="/voice", method="POST",
+                        speech_timeout="auto", language=twilio_lang,
+                        speech_model="phone_call")
+        speak(gather, MESSAGES["ask_time"][lang], twilio_lang)
         response.append(gather)
         return str(response)
 
     if step == "time" and speech:
         session["data"]["appointment_time"] = speech
+        print("🧾 SESSION DATA:", session["data"])
         session["step"] = "confirm"
 
-        d = session["data"]
-
         gather = Gather(input="dtmf", num_digits=1, action="/voice", method="POST")
-        gather.say(
-            f"You want an appointment with Doctor {d['doctor_name']} "
-            f"on {d['appointment_date']} at {d['appointment_time']}. "
-            "Press 1 to confirm. Press 2 to cancel."
-        )
+        speak(gather, MESSAGES["confirm"][lang], twilio_lang)
         response.append(gather)
         return str(response)
 
@@ -161,7 +231,6 @@ async def voice_webhook(request: Request):
     if step == "confirm" and digits:
         if digits == "1":
 
-            # 🔥 CLEAN & STRUCTURE USING GEMINI
             structured = extract_appointment_data(
                 f"""
                 Name: {session['data'].get('patient_name','')}
@@ -173,8 +242,11 @@ async def voice_webhook(request: Request):
                 """
             )
 
+            print("\n📦 STRUCTURED DATA BEFORE DB SAVE:")
+            print(structured)
+
             if not structured:
-                response.say("Sorry, I could not process your appointment details.")
+                speak(response, MESSAGES["error"][lang], twilio_lang)
             else:
                 msg = book_slot_db(
                     patient_name=structured["patient_name"],
@@ -185,93 +257,15 @@ async def voice_webhook(request: Request):
                     appointment_time=structured["appointment_time"],
                     call_sid=call_sid,
                 )
-                response.say(msg)
+                speak(response, msg, twilio_lang)
 
         else:
-            response.say("Your appointment was cancelled.")
+            speak(response, "Cancelled.", twilio_lang)
 
         CALL_SESSIONS.pop(call_sid, None)
         response.hangup()
         return str(response)
 
-    # ================= CANCEL FLOW =================
-    if step == "cancel_confirm":
-        appt = get_latest_appointment_by_call_sid(call_sid)
-        if not appt:
-            response.say("No active appointment found.")
-            response.hangup()
-            return str(response)
-
-        session["data"]["appointment_id"] = appt["id"]
-
-        gather = Gather(input="dtmf", num_digits=1, action="/voice", method="POST")
-        gather.say(
-            f"You have an appointment on {appt['appointment_date']} "
-            f"at {appt['appointment_time']}. "
-            "Press 1 to cancel. Press 2 to keep it."
-        )
-        session["step"] = "cancel_final"
-        response.append(gather)
-        return str(response)
-
-    if step == "cancel_final" and digits:
-        if digits == "1":
-            response.say(cancel_slot_db(session["data"]["appointment_id"]))
-        else:
-            response.say("Your appointment was not cancelled.")
-
-        CALL_SESSIONS.pop(call_sid, None)
-        response.hangup()
-        return str(response)
-
-    # ================= RESCHEDULE FLOW =================
-    if step == "reschedule_date" and speech:
-        session["data"]["new_date"] = speech
-        session["step"] = "reschedule_time"
-
-        gather = Gather(input="speech", action="/voice", method="POST")
-        gather.say("Please say the new appointment time.")
-        response.append(gather)
-        return str(response)
-
-    if step == "reschedule_time" and speech:
-        appt = get_latest_appointment_by_call_sid(call_sid)
-        if not appt:
-            response.say("No appointment found.")
-            response.hangup()
-            return str(response)
-
-        response.say(
-            reschedule_slot_db(
-                appt["id"],
-                session["data"]["new_date"],
-                speech,
-            )
-        )
-
-        CALL_SESSIONS.pop(call_sid, None)
-        response.hangup()
-        return str(response)
-
-    response.say("Sorry, something went wrong. Please call again.")
+    speak(response, MESSAGES["error"][lang], twilio_lang)
     response.hangup()
     return str(response)
-
-
-# =========================
-# OUTBOUND DEMO CALL
-# =========================
-@app.get("/demo-outbound-call")
-def demo_outbound_call():
-    client = Client(
-        os.getenv("TWILIO_ACCOUNT_SID"),
-        os.getenv("TWILIO_AUTH_TOKEN"),
-    )
-
-    call = client.calls.create(
-        to="+919766899198",
-        from_=os.getenv("TWILIO_PHONE_NUMBER"),
-        twiml="<Response><Say>This is a demo appointment reminder.</Say></Response>",
-    )
-
-    return {"status": "Call triggered", "call_sid": call.sid}
