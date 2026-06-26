@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}SmileCare Dental Hospital{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', path='css/style.css') }}">
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm fixed-top">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="/">
+                <i class="bi bi-hospital fs-2 text-primary me-2"></i>
+                <span class="fw-bold" style="color: #0d6efd;">SmileCare</span>
+                <span class="fw-light ms-1 text-secondary">Dental Hospital</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/#about">About</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/#services">Services</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/#doctors">Doctors</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/#ai-agent">AI Agent</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/#contact">Contact</a></li>
+                    <li class="nav-item ms-lg-2">
+                        <a class="btn btn-primary rounded-pill px-4" href="/appointments">
+                            <i class="bi bi-calendar-check me-1"></i>Dashboard
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    {% block content %}{% endblock %}
+
+    <footer class="bg-dark text-white pt-5 pb-4">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-lg-4">
+                    <h5 class="d-flex align-items-center mb-3">
+                        <i class="bi bi-hospital fs-4 text-primary me-2"></i>
+                        SmileCare Dental Hospital
+                    </h5>
+                    <p class="text-secondary">AI-powered dental care with multilingual voice assistant. Book appointments instantly.</p>
+                    <div class="d-flex gap-3 fs-5">
+                        <a href="#" class="text-secondary hover-primary"><i class="bi bi-facebook"></i></a>
+                        <a href="#" class="text-secondary hover-primary"><i class="bi bi-twitter-x"></i></a>
+                        <a href="#" class="text-secondary hover-primary"><i class="bi bi-instagram"></i></a>
+                        <a href="#" class="text-secondary hover-primary"><i class="bi bi-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-2">
+                    <h6 class="fw-bold mb-3">Quick Links</h6>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="/" class="text-secondary text-decoration-none">Home</a></li>
+                        <li class="mb-2"><a href="/#about" class="text-secondary text-decoration-none">About Us</a></li>
+                        <li class="mb-2"><a href="/#services" class="text-secondary text-decoration-none">Services</a></li>
+                        <li class="mb-2"><a href="/#doctors" class="text-secondary text-decoration-none">Doctors</a></li>
+                        <li class="mb-2"><a href="/#ai-agent" class="text-secondary text-decoration-none">AI Agent</a></li>
+                        <li class="mb-2"><a href="/#contact" class="text-secondary text-decoration-none">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3">
+                    <h6 class="fw-bold mb-3">Services</h6>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="/#services" class="text-secondary text-decoration-none">Dental Checkup</a></li>
+                        <li class="mb-2"><a href="/#services" class="text-secondary text-decoration-none">Teeth Cleaning</a></li>
+                        <li class="mb-2"><a href="/#services" class="text-secondary text-decoration-none">Root Canal</a></li>
+                        <li class="mb-2"><a href="/#services" class="text-secondary text-decoration-none">Dental Implants</a></li>
+                        <li class="mb-2"><a href="/#services" class="text-secondary text-decoration-none">Orthodontics</a></li>
+                        <li class="mb-2"><a href="/#services" class="text-secondary text-decoration-none">Cosmetic Dentistry</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3">
+                    <h6 class="fw-bold mb-3">Contact Info</h6>
+                    <ul class="list-unstyled text-secondary">
+                        <li class="mb-2"><i class="bi bi-geo-alt me-2"></i>Deccan Corner, Pune, India</li>
+                        <li class="mb-2"><i class="bi bi-telephone me-2"></i>+1 (866) 688-3811</li>
+                        <li class="mb-2"><i class="bi bi-envelope me-2"></i>info@smilecare.com</li>
+                        <li class="mb-2"><i class="bi bi-clock me-2"></i>Mon-Sat: 9 AM - 7 PM</li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="my-4 border-secondary">
+            <div class="text-center text-secondary">
+                <p class="mb-0">&copy; 2024 SmileCare Dental Hospital. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', path='js/app.js') }}"></script>
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>

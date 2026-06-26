@@ -13,4 +13,5 @@ mysql-connector-python==8.3.0
 requests==2.31.0
 pydantic==1.10.13
 twilio==8.1.0
+jinja2>=3.1.0
 

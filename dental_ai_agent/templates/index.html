@@ -1,0 +1,361 @@
+{% extends "base.html" %}
+{% block title %}SmileCare Dental Hospital - AI Powered Dental Care{% endblock %}
+{% block content %}
+
+<section class="hero-section d-flex align-items-center" id="home">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-7" data-aos="fade-right">
+                <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill mb-3 d-inline-block">
+                    <i class="bi bi-robot me-1"></i> AI-Powered Dental Care
+                </span>
+                <h1 class="display-4 fw-bold mb-3">AI Powered Dental Care<br><span class="text-primary">Appointment System</span></h1>
+                <p class="lead text-secondary mb-4 fs-5">Book appointments instantly through our multilingual AI Voice Agent. Available in English, Hindi, and Marathi.</p>
+                <div class="d-flex flex-wrap gap-3">
+                    <a href="#ai-agent" class="btn btn-primary btn-lg rounded-pill px-4 py-3 shadow-sm">
+                        <i class="bi bi-phone-vibrate me-2"></i>Call AI Agent
+                    </a>
+                    <a href="#appointment-modal" class="btn btn-outline-primary btn-lg rounded-pill px-4 py-3" data-bs-toggle="modal" data-bs-target="#appointmentModal">
+                        <i class="bi bi-calendar-plus me-2"></i>Book Appointment
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-5 text-center mt-5 mt-lg-0" data-aos="fade-left">
+                <div class="hero-image-wrapper">
+                    <img src="https://img.freepik.com/free-vector/dental-clinic-dentist-team-concept_23-2148633467.jpg" alt="Dental Clinic" class="img-fluid rounded-4 shadow-lg">
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5" id="about">
+    <div class="container">
+        <div class="text-center mb-5" data-aos="fade-up">
+            <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill mb-2">About Us</span>
+            <h2 class="fw-bold">Welcome to SmileCare Dental Hospital</h2>
+            <p class="text-secondary mx-auto" style="max-width: 600px;">We combine advanced AI technology with expert dental care to provide you with the best treatment experience.</p>
+        </div>
+        <div class="row g-4 mb-5">
+            <div class="col-md-6" data-aos="fade-right">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="icon-box bg-primary bg-opacity-10 rounded-3 p-3 me-3">
+                                <i class="bi bi-bullseye fs-3 text-primary"></i>
+                            </div>
+                            <h4 class="fw-bold mb-0">Our Mission</h4>
+                        </div>
+                        <p class="text-secondary mb-0">To provide accessible, affordable, and high-quality dental care using cutting-edge AI technology. We strive to make dental appointments as simple as a phone call.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6" data-aos="fade-left">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="icon-box bg-primary bg-opacity-10 rounded-3 p-3 me-3">
+                                <i class="bi bi-eye fs-3 text-primary"></i>
+                            </div>
+                            <h4 class="fw-bold mb-0">Our Vision</h4>
+                        </div>
+                        <p class="text-secondary mb-0">To be India's most trusted dental care provider by seamlessly blending AI innovation with compassionate patient care and clinical excellence.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row g-3 text-center" data-aos="fade-up">
+            <div class="col-md-4">
+                <div class="stat-card p-4 rounded-4 shadow-sm">
+                    <div class="stat-number fw-bold text-primary">10+</div>
+                    <div class="stat-label text-secondary">Expert Doctors</div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stat-card p-4 rounded-4 shadow-sm">
+                    <div class="stat-number fw-bold text-primary">5000+</div>
+                    <div class="stat-label text-secondary">Happy Patients</div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stat-card p-4 rounded-4 shadow-sm">
+                    <div class="stat-number fw-bold text-primary">15+</div>
+                    <div class="stat-label text-secondary">Years Experience</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5 bg-light" id="services">
+    <div class="container">
+        <div class="text-center mb-5" data-aos="fade-up">
+            <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill mb-2">Our Services</span>
+            <h2 class="fw-bold">Comprehensive Dental Care</h2>
+            <p class="text-secondary mx-auto" style="max-width: 600px;">From routine checkups to advanced procedures, we offer everything you need for a healthy smile.</p>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-4" data-aos="flip-up">
+                <div class="service-card text-center p-4 rounded-4 bg-white shadow-sm h-100">
+                    <div class="service-icon mx-auto mb-3">
+                        <i class="bi bi-heart-pulse fs-1 text-primary"></i>
+                    </div>
+                    <h5 class="fw-bold">Dental Checkup</h5>
+                    <p class="text-secondary small mb-0">Comprehensive oral examination and professional assessment of your dental health.</p>
+                </div>
+            </div>
+            <div class="col-md-4" data-aos="flip-up" data-aos-delay="100">
+                <div class="service-card text-center p-4 rounded-4 bg-white shadow-sm h-100">
+                    <div class="service-icon mx-auto mb-3">
+                        <i class="bi bi-droplet fs-1 text-primary"></i>
+                    </div>
+                    <h5 class="fw-bold">Teeth Cleaning</h5>
+                    <p class="text-secondary small mb-0">Professional scaling and polishing to remove plaque and keep your smile bright.</p>
+                </div>
+            </div>
+            <div class="col-md-4" data-aos="flip-up" data-aos-delay="200">
+                <div class="service-card text-center p-4 rounded-4 bg-white shadow-sm h-100">
+                    <div class="service-icon mx-auto mb-3">
+                        <i class="bi bi-gear fs-1 text-primary"></i>
+                    </div>
+                    <h5 class="fw-bold">Root Canal Treatment</h5>
+                    <p class="text-secondary small mb-0">Painless root canal therapy to save infected teeth and restore your smile.</p>
+                </div>
+            </div>
+            <div class="col-md-4" data-aos="flip-up">
+                <div class="service-card text-center p-4 rounded-4 bg-white shadow-sm h-100">
+                    <div class="service-icon mx-auto mb-3">
+                        <i class="bi bi-gem fs-1 text-primary"></i>
+                    </div>
+                    <h5 class="fw-bold">Dental Implants</h5>
+                    <p class="text-secondary small mb-0">Permanent tooth replacement solutions with advanced implant technology.</p>
+                </div>
+            </div>
+            <div class="col-md-4" data-aos="flip-up" data-aos-delay="100">
+                <div class="service-card text-center p-4 rounded-4 bg-white shadow-sm h-100">
+                    <div class="service-icon mx-auto mb-3">
+                        <i class="bi bi-activity fs-1 text-primary"></i>
+                    </div>
+                    <h5 class="fw-bold">Orthodontics</h5>
+                    <p class="text-secondary small mb-0">Braces and aligners for perfectly aligned teeth and a confident smile.</p>
+                </div>
+            </div>
+            <div class="col-md-4" data-aos="flip-up" data-aos-delay="200">
+                <div class="service-card text-center p-4 rounded-4 bg-white shadow-sm h-100">
+                    <div class="service-icon mx-auto mb-3">
+                        <i class="bi bi-stars fs-1 text-primary"></i>
+                    </div>
+                    <h5 class="fw-bold">Cosmetic Dentistry</h5>
+                    <p class="text-secondary small mb-0">Teeth whitening, veneers, and smile makeovers for a picture-perfect smile.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5" id="doctors">
+    <div class="container">
+        <div class="text-center mb-5" data-aos="fade-up">
+            <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill mb-2">Our Team</span>
+            <h2 class="fw-bold">Meet Our Expert Doctors</h2>
+            <p class="text-secondary mx-auto" style="max-width: 600px;">Experienced dental professionals dedicated to your oral health.</p>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-4" data-aos="zoom-in">
+                <div class="doctor-card text-center p-4 rounded-4 shadow-sm bg-white h-100">
+                    <div class="doctor-img-wrapper mx-auto mb-3">
+                        <img src="https://img.freepik.com/free-photo/portrait-smiling-male-doctor_23-2148213997.jpg" alt="Dr. Rahul Sharma" class="rounded-circle img-fluid" style="width: 150px; height: 150px; object-fit: cover;">
+                    </div>
+                    <h5 class="fw-bold mb-1">Dr. Rahul Sharma</h5>
+                    <p class="text-primary small mb-2">Dentist</p>
+                    <p class="text-secondary small mb-0">10+ years of experience in general dentistry and preventive care.</p>
+                </div>
+            </div>
+            <div class="col-md-4" data-aos="zoom-in" data-aos-delay="100">
+                <div class="doctor-card text-center p-4 rounded-4 shadow-sm bg-white h-100">
+                    <div class="doctor-img-wrapper mx-auto mb-3">
+                        <img src="https://img.freepik.com/free-photo/portrait-smiling-female-doctor_23-2148213998.jpg" alt="Dr. Priya Patil" class="rounded-circle img-fluid" style="width: 150px; height: 150px; object-fit: cover;">
+                    </div>
+                    <h5 class="fw-bold mb-1">Dr. Priya Patil</h5>
+                    <p class="text-primary small mb-2">Orthodontist</p>
+                    <p class="text-secondary small mb-0">Expert in braces, aligners, and smile correction treatments.</p>
+                </div>
+            </div>
+            <div class="col-md-4" data-aos="zoom-in" data-aos-delay="200">
+                <div class="doctor-card text-center p-4 rounded-4 shadow-sm bg-white h-100">
+                    <div class="doctor-img-wrapper mx-auto mb-3">
+                        <img src="https://img.freepik.com/free-photo/confident-female-doctor_23-2148213999.jpg" alt="Dr. Anjali Deshmukh" class="rounded-circle img-fluid" style="width: 150px; height: 150px; object-fit: cover;">
+                    </div>
+                    <h5 class="fw-bold mb-1">Dr. Anjali Deshmukh</h5>
+                    <p class="text-primary small mb-2">Dental Surgeon</p>
+                    <p class="text-secondary small mb-0">Specialist in oral surgery, implants, and complex dental procedures.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5 bg-gradient-primary" id="ai-agent">
+    <div class="container">
+        <div class="text-center mb-5" data-aos="fade-up">
+            <span class="badge bg-white bg-opacity-25 text-white px-3 py-2 rounded-pill mb-2">
+                <i class="bi bi-robot me-1"></i> AI Voice Agent
+            </span>
+            <h2 class="fw-bold text-white">Meet Our AI Receptionist</h2>
+            <p class="text-white-50 mx-auto" style="max-width: 600px;">Book appointments naturally by speaking in English, Hindi, or Marathi.</p>
+        </div>
+        <div class="row align-items-center g-5">
+            <div class="col-lg-6 text-center" data-aos="fade-right">
+                <div class="ai-assistant-wrapper">
+                    <div class="ai-avatar mb-4">
+                        <div class="avatar-circle mx-auto">
+                            <i class="bi bi-robot fs-1 text-white"></i>
+                        </div>
+                        <div class="pulse-ring"></div>
+                    </div>
+                    <h4 class="text-white fw-bold">Yaleena - AI Receptionist</h4>
+                    <p class="text-white-50">Your 24/7 dental assistant</p>
+                    <div class="d-flex justify-content-center gap-2 flex-wrap mb-4">
+                        <span class="badge bg-white bg-opacity-20 text-white px-3 py-2 rounded-pill">
+                            <i class="bi bi-flag me-1"></i> English
+                        </span>
+                        <span class="badge bg-white bg-opacity-20 text-white px-3 py-2 rounded-pill">
+                            <i class="bi bi-flag me-1"></i> Hindi
+                        </span>
+                        <span class="badge bg-white bg-opacity-20 text-white px-3 py-2 rounded-pill">
+                            <i class="bi bi-flag me-1"></i> Marathi
+                        </span>
+                    </div>
+                    <ul class="list-unstyled text-white-50 text-start d-inline-block">
+                        <li class="mb-2"><i class="bi bi-check-circle-fill text-white me-2"></i>Voice-based Appointment Booking</li>
+                        <li class="mb-2"><i class="bi bi-check-circle-fill text-white me-2"></i>Automatic Doctor Selection</li>
+                        <li class="mb-2"><i class="bi bi-check-circle-fill text-white me-2"></i>Conversational Assistance</li>
+                        <li class="mb-2"><i class="bi bi-check-circle-fill text-white me-2"></i>Multilingual Support</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-lg-6" data-aos="fade-left">
+                <div class="card border-0 shadow-lg rounded-4 bg-white">
+                    <div class="card-body p-5 text-center">
+                        <div class="mb-4">
+                            <div class="icon-box bg-primary bg-opacity-10 rounded-3 p-3 d-inline-flex mb-3">
+                                <i class="bi bi-telephone-inbound fs-2 text-primary"></i>
+                            </div>
+                            <h4 class="fw-bold">Talk to our AI Receptionist</h4>
+                            <p class="text-secondary">Call now to book your appointment instantly</p>
+                        </div>
+                        <div class="phone-number-display bg-light rounded-3 p-3 mb-4">
+                            <h3 class="fw-bold text-primary mb-0" id="twilio-phone">{{ twilio_phone }}</h3>
+                        </div>
+                        <div class="d-flex justify-content-center gap-3 flex-wrap">
+                            <a href="tel:{{ twilio_phone }}" class="btn btn-primary btn-lg rounded-pill px-4 shadow-sm">
+                                <i class="bi bi-telephone me-2"></i>Call Now
+                            </a>
+                            <button class="btn btn-outline-primary btn-lg rounded-pill px-4" onclick="copyPhoneNumber()">
+                                <i class="bi bi-clipboard me-2"></i>Copy Number
+                            </button>
+                        </div>
+                        <div id="copy-toast" class="text-success small mt-2 d-none">
+                            <i class="bi bi-check-circle me-1"></i>Number copied!
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5" id="contact">
+    <div class="container">
+        <div class="text-center mb-5" data-aos="fade-up">
+            <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill mb-2">Contact Us</span>
+            <h2 class="fw-bold">Get In Touch</h2>
+            <p class="text-secondary mx-auto" style="max-width: 600px;">Visit us or reach out anytime. We're here to help.</p>
+        </div>
+        <div class="row g-4">
+            <div class="col-lg-5" data-aos="fade-right">
+                <div class="row g-3">
+                    <div class="col-sm-6">
+                        <div class="contact-card p-3 rounded-3 shadow-sm bg-light h-100">
+                            <div class="icon-box bg-primary bg-opacity-10 rounded-2 p-2 d-inline-flex mb-2">
+                                <i class="bi bi-geo-alt fs-4 text-primary"></i>
+                            </div>
+                            <h6 class="fw-bold small">Address</h6>
+                            <p class="text-secondary small mb-0">Deccan Corner, Pune, Maharashtra, India</p>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="contact-card p-3 rounded-3 shadow-sm bg-light h-100">
+                            <div class="icon-box bg-primary bg-opacity-10 rounded-2 p-2 d-inline-flex mb-2">
+                                <i class="bi bi-telephone fs-4 text-primary"></i>
+                            </div>
+                            <h6 class="fw-bold small">Phone</h6>
+                            <p class="text-secondary small mb-0">{{ twilio_phone }}</p>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="contact-card p-3 rounded-3 shadow-sm bg-light h-100">
+                            <div class="icon-box bg-primary bg-opacity-10 rounded-2 p-2 d-inline-flex mb-2">
+                                <i class="bi bi-envelope fs-4 text-primary"></i>
+                            </div>
+                            <h6 class="fw-bold small">Email</h6>
+                            <p class="text-secondary small mb-0">info@smilecare.com</p>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="contact-card p-3 rounded-3 shadow-sm bg-light h-100">
+                            <div class="icon-box bg-primary bg-opacity-10 rounded-2 p-2 d-inline-flex mb-2">
+                                <i class="bi bi-clock fs-4 text-primary"></i>
+                            </div>
+                            <h6 class="fw-bold small">Working Hours</h6>
+                            <p class="text-secondary small mb-0">Mon-Sat: 9 AM - 7 PM</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-7" data-aos="fade-left">
+                <div class="map-container rounded-4 overflow-hidden shadow-sm">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3783.123!2d73.8567!3d18.5204!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMThCsMzCsDMxJzEzLjQiTiA3M8KwNTEnMjQuMSJF!5e0!3m2!1sen!2sin!4v1" width="100%" height="300" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="modal fade" id="appointmentModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header bg-primary text-white border-0">
+                <h5 class="modal-title"><i class="bi bi-calendar-check me-2"></i>Book Appointment</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4">
+                <div class="text-center mb-4">
+                    <i class="bi bi-phone-vibrate text-primary fs-1"></i>
+                    <h5 class="mt-2">Talk to Our AI Receptionist</h5>
+                    <p class="text-secondary">Call us to book your appointment instantly using our AI Voice Agent.</p>
+                </div>
+                <div class="d-flex justify-content-center gap-3">
+                    <a href="tel:{{ twilio_phone }}" class="btn btn-primary btn-lg rounded-pill px-4">
+                        <i class="bi bi-telephone me-2"></i>Call {{ twilio_phone }}
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+function copyPhoneNumber() {
+    const phone = document.getElementById('twilio-phone').textContent.trim();
+    navigator.clipboard.writeText(phone).then(() => {
+        const toast = document.getElementById('copy-toast');
+        toast.classList.remove('d-none');
+        setTimeout(() => toast.classList.add('d-none'), 3000);
+    });
+}
+</script>
+{% endblock %}
