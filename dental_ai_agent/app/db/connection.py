@@ -5,10 +5,11 @@ import mysql.connector
 
 def get_db_connection():
     return mysql.connector.connect(
-        host="localhost",
+        host="zephyr.proxy.rlwy.net",
+        port=21381,
         user="root",
-        password="200103",
-        database="conversational_ai"
+        password="unRTPJlZTUKdsaQDWeygOvVasqgtltmc",
+        database="railway"
     )
 
 
