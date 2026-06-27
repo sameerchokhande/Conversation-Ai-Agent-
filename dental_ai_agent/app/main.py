@@ -823,54 +823,23 @@ async def reschedule_time(request: Request):
 
 @app.get("/test-reminder")
 async def test_reminder():
-
-    make_reminder_call()
-
-    return {
-        "message": "Reminder call initiated."
-    }
-
-
-
-@app.get("/db-test")
-def db_test():
     try:
-        db = get_db()
-        cursor = db.cursor(dictionary=True)
-
-        cursor.execute("SHOW TABLES")
-        tables = cursor.fetchall()
-
-        cursor.close()
-        db.close()
-
-        return tables
+        make_reminder_call()
+        return {
+            "status": "success",
+            "message": "Reminder call initiated."
+        }
 
     except Exception as e:
-        return {"error": str(e)}
+        print("❌ REMINDER ERROR:", e)
 
-@app.get("/appointments-test")
-def appointments_test():
-    try:
-        db = get_db()
-        cursor = db.cursor(dictionary=True)
+        return {
+            "status": "failed",
+            "error": str(e)
+        }
 
-        cursor.execute("""
-            SELECT *
-            FROM appointments
-            ORDER BY id DESC
-            LIMIT 5
-        """)
 
-        data = cursor.fetchall()
 
-        cursor.close()
-        db.close()
-
-        return data
-
-    except Exception as e:
-        return {"error": str(e)}
 
 
 from app.services.scheduler_service import (
